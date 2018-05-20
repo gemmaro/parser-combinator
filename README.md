@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/parser_combinator_dsl.svg)](https://badge.fury.io/rb/parser_combinator_dsl)
+
 # Parser Combinator
 This library provides a DSL which you can use to easily generate parsers in
 Ruby.
