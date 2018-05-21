@@ -102,6 +102,18 @@ describe Grammar do
     assert_parses parser, with: "asd123", remaining: "123"
   end
 
+  it "matches many1 chars except newlines, followed by newline(s)" do
+    parser = Grammar.build do 
+      rule(:eol) { many1 { anyChar(["\n"]) } | eof }
+      rule(:stuff) { many1 { anyCharBut(["\n"]) } >> (rule :eol) }
+      start(:stuff)
+    end
+
+    assert_parses parser, with: "Some stuff 123", remaining: ""
+    assert_parses parser, with: "Some stuff 123 \n thisremains", remaining: " thisremains" 
+    assert_parses parser, with: "Some stuff 123öäü\nthisremains", remaining: "thisremains" 
+  end
+
   it "matches many0" do
     parser = Grammar.build do
       rule(:word) { many0 { anyLetter } }

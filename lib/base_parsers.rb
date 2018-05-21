@@ -153,12 +153,16 @@ module BaseParsers
     Parser.new do |input|
       first_char = input[0]
       result     = ParserResult.ok(matched: first_char, remaining: input[1..-1])
-
-      chars.each do |char|
-        if first_char == char
-          result = ParserResult.fail(input)
-          break
+      
+      if !(input == "" || input.nil?)
+        chars.each do |char|
+          if first_char == char
+            result = ParserResult.fail(input)
+            break
+          end
         end
+      else
+        result = ParserResult.fail(input) 
       end
 
       result
