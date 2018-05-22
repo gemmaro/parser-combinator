@@ -90,10 +90,12 @@ module BaseParsers
         result = parser.run(remaining)
         return ParserResult.fail(input) unless result.ok?
         remaining = result.remaining
+        matched += result.matched
         result.matched
       end
 
-      callback.call(*new_args)
+      output = callback.call(*new_args)
+      ParserResult.ok(output, matched: matched, remaining: remaining)
     end
   end
 

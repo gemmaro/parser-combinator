@@ -132,7 +132,7 @@ describe Grammar do
       start(:letterOrNumber)
     end
 
-    assert_equal ["w", "8"], parser.run("w8")
+    assert_equal ["w", "8"], parser.run("w8").output
 
     parser = Grammar.build do
       rule(:letter)         { many1 { anyLetter } }
@@ -140,7 +140,7 @@ describe Grammar do
       start(:letterOrNumber)
     end
 
-    assert_equal ["w", "8"], parser.run("w8")
+    assert_equal ["w", "8"], parser.run("w8").output
   end
 
   it "uses regex" do
