@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 	s.name	= 'parser_combinator_dsl'
-	s.version 	= '1.0.2'
-	s.date 		= '2018-05-22'
+	s.version 	= '1.0.3'
+	s.date 		= '2018-05-31'
 	s.summary	= 'A parser combinator in Ruby, with a pretty DSL'
 	s.description	= """
 	This library provides a DSL which you can use to easily generate parsers in Ruby.
