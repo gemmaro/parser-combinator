@@ -24,13 +24,16 @@ module Combinators
   def >>(other)
     Parser.new do |input|
       first = run(input)
-      matched = ""
+      matched = "" 
+      output = []
       if first.ok?
         matched = matched + first.matched
+        output += first.output
         second = other.run(first.remaining)
         if second.ok?
           matched = matched + second.matched
-          ParserResult.ok(matched: matched, remaining: second.remaining)
+          output = [*output, second.output]
+          ParserResult.ok(output, matched: matched, remaining: second.remaining)
         else
           ParserResult.fail(input)
         end
@@ -45,12 +48,15 @@ module Combinators
     Parser.new do |input|
       first = run(input)
       matched = ""
+      output = []
       if first.ok?
         matched = first.matched
+        output += first.output
         second  = other.run(first.remaining)
         if second.ok?
           matched = matched + second.matched
-          ParserResult.ok(matched: matched, remaining: second.remaining)
+          output = [*output, second.output]
+          ParserResult.ok(output, matched: matched, remaining: second.remaining)
         else
           first
         end
@@ -65,17 +71,20 @@ module Combinators
     Parser.new do |input|
       first     = run(input)
       matched   = ""
+      output    = []
       remaining = input
 
       if first.ok?
         matched   = first.matched
+        output += first.output
         remaining = first.remaining
       end
 
       second = other.run(remaining)
       if second.ok?
         matched = matched + second.matched
-        ParserResult.ok(matched: matched, remaining: second.remaining)
+        output = [*output, second.output]
+        ParserResult.ok(output, matched: matched, remaining: second.remaining)
       else
         ParserResult.fail(input)
       end
@@ -109,4 +118,59 @@ module Combinators
       second.ok? ? second : ParserResult.fail(input)
     end
   end
+
+  # Match this, other is QUIETLY consumed
+  def /(other)
+    Parser.new do |input|
+      first = run(input)
+      matched = "" 
+      if first.ok?
+        matched = matched + first.matched
+        second = other.run(first.remaining)
+        if second.ok?
+          matched = matched + second.matched
+          ParserResult.ok(first.output, matched: matched, remaining: second.remaining)
+        else
+          ParserResult.fail(input)
+        end
+      else
+        first
+      end
+    end
+  end
+
+  # Match other, this is QUIETLY consumed
+  def *(other)
+    Parser.new do |input|
+      first = run(input)
+      matched = "" 
+      
+      if first.ok?
+        matched += first.matched
+        second = other.run(first.remaining)
+        if second.ok?
+          matched += second.matched
+          ParserResult.ok(second.output, matched: matched, remaining: second.remaining)
+        else
+          ParserResult.fail(input)
+        end
+      else
+        first
+      end
+    end
+  end
+
+  # other needs to fail for this to succeed; other is only peeking, not consuming
+  def !=(other)
+    Parser.new do |input|
+      second = other.run(input)
+
+      if second.ok?
+        ParserResult.fail(input)
+      else
+        run(input)
+      end
+    end
+  end
+
 end

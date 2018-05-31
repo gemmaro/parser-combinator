@@ -18,7 +18,7 @@ module BaseParsers
   end
 
   def whitespace
-    many0 { anyChar([' '] + %w[\b \f \n \r \t]) }
+    many0 { anyChar([" ", "\b", "\f", "\n", "\r", "\t"]) }
   end
 
   def one(char)
@@ -52,6 +52,7 @@ module BaseParsers
   def many1(&wrapper)
     Parser.new do |input|
       matched   = ""
+      output    = []
       remaining = input
       parser    = wrapper.call
 
@@ -59,10 +60,13 @@ module BaseParsers
         result = parser.run(remaining)
         break if remaining.nil? || result.fail?
         matched   = matched + result.matched
+        output += result.output unless (result.output.length == 1 and result.output[0].length == 1)
         remaining = result.remaining
       end
 
-      ParserResult.new(!matched.empty?, remaining, matched)
+      output = nil if output.empty?
+
+      ParserResult.new(!matched.empty?, remaining, matched, output)
     end
   end
 
@@ -85,17 +89,25 @@ module BaseParsers
     Parser.new do |input|
       remaining = input
       matched   = ""
+      fail = nil
 
       new_args = parsers.map do |parser|
         result = parser.run(remaining)
-        return ParserResult.fail(input) unless result.ok?
+        unless result.ok?
+          fail = ParserResult.fail(input)
+          break
+        end
         remaining = result.remaining
         matched += result.matched
-        result.matched
+        result.output
       end
 
-      output = callback.call(*new_args)
-      ParserResult.ok(output, matched: matched, remaining: remaining)
+      if fail.nil?
+        output = callback.call(*new_args)
+        ParserResult.ok(output, matched: matched, remaining: remaining)
+      else
+        fail
+      end
     end
   end
 
