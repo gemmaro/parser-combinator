@@ -1,8 +1,10 @@
-def assert_parses(parser, with:, remaining:, matched: nil, should_fail: false)
+def assert_parses(parser, with:, remaining:, matched: nil, output: nil, should_fail: false)
   result = parser.run(with)
+  puts result.to_s
   assert_equal !should_fail,      result.success
   assert_equal remaining, result.remaining
   assert_equal matched,   result.matched unless matched.nil?
+  assert_equal output,    result.output  unless output.nil?
 end
 
 def test_parser(parser, with:, should_fail: false)

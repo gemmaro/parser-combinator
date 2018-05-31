@@ -98,7 +98,7 @@ module Combinators
       if first.ok?
         second  = other.run(first.remaining)
         if second.ok?
-          ParserResult.ok(matched: first.matched, remaining: second.remaining)
+          ParserResult.ok(first.output, matched: first.matched, remaining: second.remaining)
         else
           first
         end

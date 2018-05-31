@@ -30,6 +30,10 @@ class ParserResult
   end
 
   def to_s()
-    "Success: " + success.to_s + ", Remaining: '" + remaining.to_s + "', Matched: '" + matched.to_s + "', Output: " + output.to_s
+    "ParserResult: {\n" +
+    "\tSuccess: " + success.to_s + 
+    "\n\tRemaining: '" + remaining.to_s + 
+    "'\n\tMatched: '" + matched.to_s + 
+    "'\n\tOutput: " + output.to_s + "\n}"
   end
 end
