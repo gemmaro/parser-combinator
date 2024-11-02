@@ -7,7 +7,7 @@ class ParserResult
     @output = output.nil? ? [matched] : output
   end
 
-  def self.ok(output=nil, matched:, remaining:)
+  def self.ok(output=nil, matched: "", remaining: "")
 #    yield matched if block_given?
     output = [matched] if output.nil?
     ParserResult.new(true, remaining, matched, output)
