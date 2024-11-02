@@ -191,7 +191,10 @@ some input and returns a `ParserResult`.
 
 ## Running tests
 
-    $ ruby -Ilib:test test/test_parser.rb
+``` shell
+rake test
+ruby -Ilib:test test/test_parser.rb # per-file testing
+```
 
 # TODO
 Decent syntax error reporting, eg: Which line, which column failed.
